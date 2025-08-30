@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rate Limit Test</title>
+  <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+  <h2>Chọn loại người dùng:</h2>
+  <button onclick="setUser('normalUser')">Normal User</button>
+  <button onclick="setUser('premiumUser')">Premium User</button>
+  <button onclick="setUser('devs')">Developer</button>
+
+  <h2>Chọn API Key</h2>
+  <button onclick="setApiKey('ZIqUUal5OIaV6ldWfPU4WaFfWMnCDoAQ5kES3MCU')">Normal User</button>
+  <button onclick="setApiKey('jYpAYtUYQA3BNUknsLaaD4iovwvKgOBJ4XyD5Cd2')">Premium User</button>
+  <button onclick="setApiKey('0H8E24Q6dtacxEBGtK5p87p7c2fjX0cheH0Shmv8')">Developer</button>
+
+  <h2>Chọn Route</h2>
+  <button onclick="setURL('Users')">Normal User</button>
+  <button onclick="setURL('PremiumUsers')">Premium User</button>
+  <button onclick="setURL('Devs')">Developer</button>
+
+  <p>Current token: <span id="currentToken">none</span></p>
+  <p>Current API Key: <span id="currentApiKey">none</span></p>
+  <p>Current URL: <span id="currentURL">none</span></p>
+  <button onclick="makeRequest()">Gửi Request</button>
+
+  <pre id="response"></pre>
+
+  <script>
+    let currentToken = "";
+    let currentApiKey = "";
+    let currentPath = "";
+    const baseURL = "https://jbjfqykyob.execute-api.ap-southeast-2.amazonaws.com/test/";
+
+    function setUser(token) {
+      currentToken = token;
+      document.getElementById("currentToken").textContent = token;
+      
+    }
+
+    function setApiKey(apiKey) {
+      currentApiKey = apiKey;
+      document.getElementById("currentApiKey").textContent = apiKey;
+    }
+
+    function setURL(path) {
+      currentPath = path;
+      document.getElementById("currentURL").textContent = baseURL + path;
+    }
+
+    async function makeRequest() {
+      const responseBox = document.getElementById("response");
+
+      if (!currentToken || !currentApiKey || !currentPath) {
+        alert("Hãy chọn loại người dùng trước.");
+        return;
+      }
+
+      try {
+        const res = await fetch(baseURL + currentPath, {
+          method: "GET",
+          headers: {
+            "Authorization": currentToken,
+            "X-Api-Key": currentApiKey,
+          }
+        });
+
+        const text = await res.text();
+        responseBox.textContent = `Status: ${res.status}\n\nBody:\n${text}`;
+      } catch (err) {
+        responseBox.textContent = `Lỗi khi gửi request:\n${err}`;
+      }
+    }
+  </script>
+</body>
+</html>
